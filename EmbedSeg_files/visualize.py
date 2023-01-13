@@ -12,6 +12,64 @@ from skimage.segmentation import relabel_sequential
 from EmbedSeg_files.utils import invert_one_hot
 
 
+def visualize(image, prediction, ground_truth, seed, new_cmp, save_img_results):
+    """
+        Visualizes 2 x 2 grid with Top-Left (Image), Top-Right (Ground Truth), Bottom-Left (Seed),
+        Bottom-Right (Instance Segmentation Prediction)
+
+        Parameters
+        -------
+
+        image: Numpy Array (YX or 1YX)
+            Raw Image
+        prediction: Numpy Array (YX)
+            Model Prediction of Instance Segmentation
+        ground_truth: Numpy Array (YX)
+            GT Label Mask
+        seed: Confidence (Seediness) Map
+
+        new_cmp: Color Map
+
+        Returns
+        -------
+
+        """
+
+    font = {'family': 'serif',
+            'color': 'white',
+            'weight': 'bold',
+            'size': 16,
+            }
+
+    plt.ioff()  # Turn interactive plotting off
+    plt.figure(figsize=(15, 15))
+    img_show = image if image.ndim == 2 else image[0, ...]
+    plt.subplot(221)
+    plt.imshow(img_show, cmap='magma')
+    plt.text(30, 30, "IM", fontdict=font)
+    plt.xlabel('Image')
+    plt.axis('off')
+    if ground_truth is not None:
+        plt.subplot(222)
+        plt.axis('off')
+        plt.imshow(ground_truth, cmap=new_cmp, interpolation='None')
+        plt.text(30, 30, "GT", fontdict=font)
+        plt.xlabel('Ground Truth')
+    plt.subplot(223)
+    plt.axis('off')
+    plt.imshow(seed, interpolation='None')
+    plt.subplot(224)
+    plt.axis('off')
+    plt.imshow(prediction, cmap=new_cmp, interpolation='None')
+    plt.text(30, 30, "PRED", fontdict=font)
+    plt.xlabel('Prediction')
+    plt.tight_layout()
+    plt.savefig(save_img_results)
+    # plt.show()
+    # plt.savefig(save_img_results)
+    plt.close()
+    
+    
 def visualize0(image, prediction, new_cmp):
     """
         Visualizes 2 x 2 grid with Top-Left (Image), Top-Right (Ground Truth), Bottom-Left (Seed),
